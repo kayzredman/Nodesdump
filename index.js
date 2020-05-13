@@ -2,13 +2,14 @@
 const fs = require('fs');
 const http = require('http');
 const url = require('url');
+const slugify = require('./1-node-farm/node_modules/slugify');
 const replaceTemplate = require('./1-node-farm/modules/replaceTemplate');
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // ********  FILES *****************
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-//BLOCKING: SYNCHRONOUS WAY!!!!
+//BLOCKING: SYNCHRONOUS WAY!!!
 
 // const txtIn = fs.readFileSync('./1-node-farm/starter/txt/input.txt', 'utf-8');
 // console.log(txtIn);
@@ -41,6 +42,9 @@ const tempProduct = fs.readFileSync('./1-node-farm/starter/templates/template-pr
 const data = fs.readFileSync('./1-node-farm/starter/dev-data/data.json', 'utf-8');
 const dataObj = JSON.parse(data);
 
+// Create an Slug for all Products in an array
+const slugs = dataObj.map(el => slugify(el.productName, { lower: true}));
+console.log(slugs);
 
 const server = http.createServer((req, res) => {
     
