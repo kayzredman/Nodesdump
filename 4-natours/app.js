@@ -3,33 +3,44 @@ const express = require("express");
 
 const app = express();
 
-//ADD THE MIDDLE-WARE FROM EXPRESS(this works with the POST handler)
+//********ADD THE MIDDLE-WARE FROM EXPRESS(this works with the route handlers)*******
+//***************************************************************************************
 app.use(express.json());
+
+app.use((req, res, next) => {
+  console.log("Hello from the middleware");
+  next();
+});
+
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  next();
+});
 
 //Read the file from JSON
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/starter/dev-data/data/tours-simple.json`)
 );
 
-//Building the API route handler for GET
-app.get("/api/v1/tours", (req, res) => {
+//*****create a function for all All Tours(1)
+const getAllTours = (req, res) => {
   res.status(200).json({
     status: "success",
     results: tours.length,
+    requestedAt: req.requestTime,
     data: {
       tours,
     },
   });
-});
+}; //*** End finction (1)***
 
-//Building the API route handler for an ID(specific tour)
-app.get("/api/v1/tours/:id", (req, res) => {
+//****create a function for a specific Tour(2)
+const getTour = (req, res) => {
   console.log(req.params);
   const id = req.params.id * 1; //convert the string to a number
   const tour = tours.find((el) => el.id === id);
 
   //check if the ID is correct or eitherwise
-  //if (id > tours.length) {
   if (!tour) {
     return res.status(404).json({
       status: "fail",
@@ -43,10 +54,10 @@ app.get("/api/v1/tours/:id", (req, res) => {
       tour,
     },
   });
-});
+}; ////*** End finction (2)***
 
-//Building the API route handler for POST
-app.post("/api/v1/tours", (req, res) => {
+//****create a function to create a Tour(3)
+const createTour = (req, res) => {
   //console.log(req.body);
 
   //request for the new ID
@@ -68,10 +79,10 @@ app.post("/api/v1/tours", (req, res) => {
       });
     }
   );
-});
+}; //*** End finction (3)***
 
-//Building the API route handler for a PATCHING(UPDATE)
-app.patch("/api/v1/tours/:id", (req, res) => {
+//****create a function to update a Tour(4)
+const updateTour = (req, res) => {
   //check for the existence of the tour ID
   if (req.params.id * 1 > tours.length) {
     return res.status(404).json({
@@ -86,10 +97,10 @@ app.patch("/api/v1/tours/:id", (req, res) => {
       tour: "<Updated tour here...>",
     },
   });
-});
+}; //*** End finction (4)***
 
-//Building the API route handler for a delete(UPDATE)
-app.delete("/api/v1/tours/:id", (req, res) => {
+//****create a function to update a Tour(5)
+const deleteTour = (req, res) => {
   //check for the existence of the tour ID
   if (req.params.id * 1 > tours.length) {
     return res.status(404).json({
@@ -102,7 +113,21 @@ app.delete("/api/v1/tours/:id", (req, res) => {
     status: "success",
     data: null,
   });
-});
+}; //*** End finction (5)***
+
+// app.get("/api/v1/tours", getAllTours);
+// app.post("/api/v1/tours", createTour);
+// app.get("/api/v1/tours/:id", getTour);
+// app.patch("/api/v1/tours/:id", updateTour);
+// app.delete("/api/v1/tours/:id", deleteTour);
+
+app.route("/api/v1/tours").get(getAllTours).post(createTour);
+
+app
+  .route("/api/v1/tours/:id")
+  .get(getTour)
+  .patch(updateTour)
+  .delete(deleteTour);
 
 // Setting up the port to listen
 const port = 3000;
