@@ -9,8 +9,10 @@ const app = express();
 //(1) ADD THE MIDDLE-WARE FROM EXPRESS(this works with the route handlers)*******
 //***************************************************************************************
 app.use(morgan("dev"));
-
 app.use(express.json());
+
+//rendering the static files via express
+app.use(express.static(`${__dirname}/starter/public`));
 
 app.use((req, res, next) => {
   console.log("Hello from the middleware");
