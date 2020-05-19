@@ -8,6 +8,10 @@ const app = express();
 
 //(1) ADD THE MIDDLE-WARE FROM EXPRESS(this works with the route handlers)*******
 //***************************************************************************************
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
+
 app.use(morgan("dev"));
 app.use(express.json());
 
