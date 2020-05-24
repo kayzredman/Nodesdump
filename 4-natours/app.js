@@ -28,7 +28,7 @@ app.use((req, res, next) => {
   next();
 });
 
-//*** (3) ROUTESS*/
+//*** (3) ROUTESS */
 
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
